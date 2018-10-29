@@ -94,10 +94,15 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_DrupalBase {
   public function updateCMSName($ufID, $ufName) {
     // CRM-5555
     if (function_exists('user_load')) {
-      $user = user_load($ufID);
-      if ($user->mail != $ufName) {
-        user_save($user, array('mail' => $ufName));
-        $user = user_load($ufID);
+      $account = user_load($ufID);
+      if ($account->mail != $ufName) {
+        global $user;
+        if (user_access('administer users') || $account->uid == $user->uid) {
+          user_save($account, array('mail' => $ufName));
+          if ($account->uid == $user->uid) {
+            $user = user_load($ufID);
+          }
+        }
       }
     }
   }
