@@ -19,6 +19,11 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
   // Number of characters in the menu js cache key
   const CACHE_KEY_STRLEN = 8;
 
+  protected static function domainID($domainID = NULL, $reset = FALSE) {
+    $domain = CRM_Core_Config::domainID();
+    return (1 == $domain) ?? 1 : 0;
+  }
+
   /**
    * Override parent method to flush caches after a write op.
    *
