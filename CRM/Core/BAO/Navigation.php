@@ -20,8 +20,8 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
   const CACHE_KEY_STRLEN = 8;
 
   protected static function domainID($domainID = NULL, $reset = FALSE) {
-    $domain = CRM_Core_Config::domainID();
-    return (1 == $domain) ?? 1 : 0;
+    $domain = CRM_Core_Config::domainID($domainID, $reset);
+    return (1 == $domain) ? 1 : 0;
   }
 
   /**
@@ -82,7 +82,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
     if (empty($params['id'])) {
       $params['is_active'] ??= FALSE;
       $params['has_separator'] ??= FALSE;
-      $params['domain_id'] = $params['domain_id'] ?? CRM_Core_Config::domainID();
+      $params['domain_id'] = $params['domain_id'] ?? self::domainID();
     }
 
     if (!isset($params['id']) ||
@@ -119,7 +119,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
    * @deprecated
    */
   public static function retrieve($params, &$defaults) {
-    $params['domain_id'] = CRM_Core_Config::domainID();
+    $params['domain_id'] = self::domainID();
     return self::commonRetrieve(self::class, $params, $defaults);
   }
 
@@ -135,7 +135,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
    *   $weight string
    */
   public static function calculateWeight($parentID = NULL, $menuID = NULL) {
-    $domainID = CRM_Core_Config::domainID();
+    $domainID = self::domainID();
 
     $weight = 1;
     // we reset weight for each parent, i.e we start from 1 to n
@@ -160,7 +160,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
    *   returns associated array
    */
   public static function getNavigationList() {
-    $cacheKeyString = "navigationList_" . CRM_Core_Config::domainID();
+    $cacheKeyString = "navigationList_" . self::domainID();
     $whereClause = '';
 
     $config = CRM_Core_Config::singleton();
@@ -169,7 +169,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
     $navigations = Civi::cache('navigation')->get($cacheKeyString);
 
     if (!$navigations) {
-      $domainID = CRM_Core_Config::domainID();
+      $domainID = self::domainID();
       $query = "
 SELECT id, label, parent_id, weight, is_active, name
 FROM civicrm_navigation WHERE domain_id = $domainID
@@ -248,7 +248,7 @@ ORDER BY weight";
    *   nested array of menus
    */
   public static function buildNavigationTree() {
-    $domainID = CRM_Core_Config::domainID();
+    $domainID = self::domainID();
     $navigationTree = [];
 
     $navigationMenu = new self();
