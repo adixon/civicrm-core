@@ -27,8 +27,8 @@ class CRM_Admin_Page_AJAX {
     if (CRM_Core_Session::getLoggedInContactID()) {
 
       $menu = CRM_Core_BAO_Navigation::buildNavigationTree();
-      CRM_Core_BAO_Navigation::buildHomeMenu($menu);
       CRM_Utils_Hook::navigationMenu($menu);
+      CRM_Core_BAO_Navigation::buildHomeMenu($menu);
       CRM_Core_BAO_Navigation::fixNavigationMenu($menu);
       CRM_Core_BAO_Navigation::orderByWeight($menu);
       CRM_Core_BAO_Navigation::filterByPermission($menu);
