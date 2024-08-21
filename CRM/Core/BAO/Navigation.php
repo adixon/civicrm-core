@@ -167,7 +167,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
       $domainID = CRM_Core_Config::domainID();
       $query = "
 SELECT id, label, parent_id, weight, is_active, name
-FROM civicrm_navigation WHERE domain_id = $domainID
+FROM civicrm_navigation WHERE domain_id in (0, $domainID)
 ORDER BY weight";
       $result = CRM_Core_DAO::executeQuery($query);
 
@@ -751,7 +751,7 @@ ORDER BY weight";
       WHERE
         civicrm_option_value.is_active = 1
       AND
-        civicrm_report_instance.domain_id = %1
+        civicrm_report_instance.domain_id in (0, %1)
       ORDER BY civicrm_option_value.weight";
 
     $dao = CRM_Core_DAO::executeQuery($sql, [
