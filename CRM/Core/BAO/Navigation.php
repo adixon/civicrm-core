@@ -247,7 +247,7 @@ ORDER BY weight";
     $navigationTree = [];
 
     $navigationMenu = new self();
-    $navigationMenu->domain_id = $domainID;
+    $navigationMenu->whereAdd("domain_id IN (0, $domainID)");
     $navigationMenu->orderBy('parent_id, weight');
     $navigationMenu->find();
 
