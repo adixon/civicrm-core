@@ -61,7 +61,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
       $params = [
         'select' => ['*', 'dashboard_contact.*'],
         'where' => [
-          ['domain_id', '=', 'current_domain'],
+          ['OR', [['domain_id', '=', 'current_domain'], ['domain_id', '=', 0]]],
         ],
       ];
 
@@ -109,7 +109,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
    */
   public static function initializeDashlets() {
     $allDashlets = (array) civicrm_api4('Dashboard', 'get', [
-      'where' => [['domain_id', '=', 'current_domain']],
+      'where' => ['OR', [['domain_id', '=', 'current_domain'], ['domain_id', '=', 0]]],
     ], 'name');
     $defaultDashlets = [];
     $defaults = ['blog' => 1, 'getting-started' => '0'];
@@ -206,8 +206,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
 
     if (!$dashboardID) {
       // Assign domain before search to allow identical dashlets in different domains.
-      $dashlet->domain_id = $params['domain_id'] ?? CRM_Core_Config::domainID();
-
+      $domainID = $params['domain_id'] ?? CRM_Core_Config::domainID();
+      $dashlet->whereAdd("domain_id IN (0, $domainID)");
       // Try and find an existing dashlet - it will be updated if found.
       if (!empty($params['name'])) {
         $dashlet->name = $params['name'] ?? NULL;
